@@ -1,0 +1,12 @@
+# ベースとなるDockerイメージ指定
+FROM node:16.13.0-alpine
+# コンテナ内に作業ディレクトリを作成
+RUN mkdir /work \
+  && apk update \
+  && npm install -g npm
+
+# コンテナログイン時のディレクトリ指定
+WORKDIR /work/front
+
+# COPY ./front/package*.json  ./
+# RUN npm install

@@ -1,0 +1,32 @@
+# ベースとなるDockerイメージ指定
+FROM golang:1.17-alpine
+# コンテナログイン時のディレクトリ指定
+WORKDIR /app
+# コンテナ内に作業ディレクトリを作成
+RUN apk update && \
+  apk add libc-dev && \
+  apk add gcc && \
+  apk add make
+
+
+COPY ./go.mod go.sum ./
+RUN go mod download && go mod verify
+
+RUN go get github.com/githubnemo/CompileDaemon
+
+RUN go get -u github.com/gin-gonic/gin@latest \
+  && go get github.com/jinzhu/gorm@latest \
+  && go get github.com/go-sql-driver/mysql@latest
+
+# Copy and build the app
+COPY . .
+COPY ./entrypoint.sh /entrypoint.sh
+
+# wait-for-it requires bash, which alpine doesn't ship with by default. Use wait-for instead
+ADD https://raw.githubusercontent.com/eficode/wait-for/v2.1.0/wait-for /usr/local/bin/wait-for
+RUN chmod +rx /usr/local/bin/wait-for /entrypoint.sh
+
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]
+
+# GoApp起動
+# CMD ["go","run","main.go"]

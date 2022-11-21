@@ -1,0 +1,51 @@
+version: "3.7"
+services:
+  go:
+    container_name: "todo_api"
+    build:
+      context: .
+      dockerfile: ./docker/go/dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    depends_on:
+      - "db"
+  db:
+    container_name: "todo_db"
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: ./docker/db/dockerfile
+    networks:
+      - default
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "secret"
+      MYSQL_DATABASE: "test"
+      MYSQL_USER: "tester"
+      MYSQL_PASSWORD: "secret"
+      # OR if you want to use "root" as the user, just these two lines
+      # MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      # MYSQL_DATABASE: ${DATABASE_NAME}
+
+      # we mount a data volume to make sure we don't lose data
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+  node:
+    build:
+      context: .
+      dockerfile: ./docker/node/dockerfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/work
+networks:
+  default:
+volumes:
+  mysql_data:
