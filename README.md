@@ -50,7 +50,7 @@ touch migration.sql
 ```
 docker-compose exec go ash
 ```
-``
+```
 go get github.com/gin-gonic/gin
 ```
 
