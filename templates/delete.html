@@ -1,0 +1,14 @@
+<body>
+    <h1>Confirmation</h1>
+    <p>Are you sure to delete this record?</p>
+    <ul>
+        <li>内容： {{.todo.Text}}</li>
+        <li>状態： {{.todo.Status}}</li>
+        <li>作成時間： {{.todo.CreatedAt}}</li>
+    </ul>
+    
+    <form method="post" action="/delete/{{.todo.ID}}">
+        <p><input type="submit" value="削除"></p>
+        <p><a href="/">戻る</a></p>
+    </form>
+    </body>
